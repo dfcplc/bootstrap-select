@@ -32,6 +32,7 @@
         //If we have no title yet, check the attribute 'title' (this is missed by jq as its not a data-attribute
         if (this.options.title == null) {
             this.options.title = this.$element.attr('title');
+            this.options.initialtitle = this.$element.attr('title');
         }
 
         //Expose public methods
@@ -236,7 +237,30 @@
                 if ( (max.length>1 && selectedItems.length > max[1]) || (max.length==1 && selectedItems.length>=2)) {
                     title = this.options.countSelectedText.replace('{0}', selectedItems.length).replace('{1}', this.$element.find('option:not([data-divider="true"]):not([data-hidden="true"])'+notDisabled).length);
                 }
+
+                if(this.multiple && this.options.selectedTextFormat.indexOf('countall') > -1) {
+                    var max_select = this.$element.find('option:not([data-divider="true"]):not([data-hidden="true"])'+notDisabled).length;
+                    var counted = selectedItems.length;
+                    
+                    if(counted >= max_select) {
+                        title = "All";
+                    }
+                }
              }
+             else if(this.multiple && this.options.selectedTextFormat.indexOf('comma') > -1)
+             {
+                var notDisabled = this.options.hideDisabled ? ':not([disabled])' : '';
+                var max_select = this.$element.find('option:not([data-divider="true"]):not([data-hidden="true"])'+notDisabled).length;
+                var counted = selectedItems.length;
+                
+                if(counted >= max_select) {
+                    title = "All";
+                }
+             }
+
+            if(this.options.keeptitle === true) {
+                title = this.options.initialtitle;
+            }
 
             //If we dont have a title, then use the default, or if nothing is set at all, use the not selected text
             if (!title) {
